@@ -30,6 +30,10 @@ const transactionSchema = new mongoose.Schema({
     createdAt: {
         type: Date,
         required: true,
+        default: Date.now
+    },
+    expireAt: {
+        type: Date,
         default: Date.now,
         expires: '30m'
     },
