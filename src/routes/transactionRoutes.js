@@ -279,19 +279,64 @@ router.get('/transaction/history', async (req, res) => {
             const index = detail.findIndex(obj => obj.createdDate === createdDate);
             if (index === -1) {
                 detail.push({
-                    createdDate: createdDate,
-                    task : [{
-                        _id: history[i]._id,
-                        rfidTag: history[i].rfidTag,
-                        license: history[i].license,
-                        slot: history[i].slot,
-                        zone: history[i].zone.tierName.charAt(0).toUpperCase() + history[i].zone.tierName.substring(1),
-                        createdTime: history[i].createdAt.toLocaleTimeString(),
-                        status: statusWord
-                    }]
+                    createdDate: createdDate
                 });
-            } else {
-                detail[index].task.push({
+            }
+        };
+
+        res.status(200).send(detail);
+    } catch (err) {
+        return res.status(500).send({ error: err.message });
+    }
+});
+
+router.post('/transaction/history/detail', async (req, res) => {
+    const { createdDate } = req.body;
+    const id = req.user._id;
+    try {
+        const transaction = await Transaction.findOne({ client: id });
+        if (!transaction) {
+            const detail = await History.findOne({ client: id }).sort({ createdAt: -1 });
+            if (detail.status === 1 ) {
+                const time = detail.createdAt;
+                time.setHours(time.getHours(),time.getMinutes(),time.getSeconds()+1800,0);
+                const history = new History({
+                    client: detail.client,
+                    rfidTag: detail.rfidTag,
+                    slot: detail.slot,
+                    zone: detail.zone,
+                    license: detail.license,
+                    createdAt: time,
+                    status: 4
+                });
+
+                await history.save();
+            }
+        }
+
+        const history = await History.find({ client: id }).sort({ createdAt: -1 }).populate('zone');
+        let detail = [];
+        for(i=0; i<history.length; i++) {
+            const status = history[i].status;
+            let statusWord = '';
+            if (status === 0) {
+                statusWord = 'Drive Out';
+            } else if (status === 1) {
+                statusWord = 'Book';
+            } else if (status === 2) {
+                statusWord = 'Park';
+            } else if (status === 3) {
+                statusWord = 'Cancel';
+            } else if (status === 4) {
+                statusWord = 'Expire';
+            }
+
+            let createdAt = history[i].createdAt.toLocaleDateString();
+            if (createdAt.charAt(1) === '/') {
+                createdAt = '0' + createdAt;
+            }
+            if (createdDate === createdAt) {
+                detail.push({
                     _id: history[i]._id,
                     rfidTag: history[i].rfidTag,
                     license: history[i].license,
