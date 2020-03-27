@@ -141,10 +141,10 @@ router.get('/transaction/load', async (req, res) => {
                 statusWord = 'Expired';
             }
 
-            const createdTime = transaction.createdAt.toLocaleTimeString();
+            const createdTime = transaction.createdAt.toLocaleTimeString("en-US", {timeZone: "Asia/Bangkok"});
             const time = transaction.createdAt;
             time.setHours(time.getHours(),time.getMinutes(),time.getSeconds()+1800,0);
-            const expiredTime = time.toLocaleTimeString();
+            const expiredTime = time.toLocaleTimeString("en-US", {timeZone: "Asia/Bangkok"});
             detail = {
                 license: transaction.license,
                 slot: transaction.slot,
@@ -272,7 +272,7 @@ router.get('/transaction/history', async (req, res) => {
                 statusWord = 'Expire';
             }
 
-            let createdDate = history[i].createdAt.toLocaleDateString();
+            let createdDate = history[i].createdAt.toLocaleDateString("en-US", {timeZone: "Asia/Bangkok"});
             if (createdDate.charAt(1) === '/') {
                 createdDate = '0' + createdDate;
             }
@@ -331,7 +331,7 @@ router.post('/transaction/history/detail', async (req, res) => {
                 statusWord = 'Expire';
             }
 
-            let createdAt = history[i].createdAt.toLocaleDateString();
+            let createdAt = history[i].createdAt.toLocaleDateString("en-US", {timeZone: "Asia/Bangkok"});
             if (createdAt.charAt(1) === '/') {
                 createdAt = '0' + createdAt;
             }
@@ -342,7 +342,7 @@ router.post('/transaction/history/detail', async (req, res) => {
                     license: history[i].license,
                     slot: history[i].slot,
                     zone: history[i].zone.tierName.charAt(0).toUpperCase() + history[i].zone.tierName.substring(1),
-                    createdTime: history[i].createdAt.toLocaleTimeString(),
+                    createdTime: history[i].createdAt.toLocaleTimeString("en-US", {timeZone: "Asia/Bangkok"}),
                     status: statusWord
                 });
             }
