@@ -36,6 +36,8 @@ router.post('/esp/parking', async (req, res) => {
             });
             await transaction.save();
             await history.save();
+        } else {
+            return res.status(404).send({ error: 'Invalid RFID Tag' });
         }
 
         res.status(200).send(detail);
