@@ -19,8 +19,8 @@ router.post('/esp/parking', bodyParser.text({type: '*/*'}), async (req, res) => 
             const slotNumber = slot.slotNumber;
 
             detail = {
-                slot: transaction.slot,
                 slotNumber,
+                slot: transaction.slot,
                 license: transaction.license
             };
             transaction.createdAt = new Date();
