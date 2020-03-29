@@ -1,5 +1,6 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const bodyParser = require('body-parser');
 
 const Transaction = mongoose.model('Transaction');
 const History = mongoose.model('History');
@@ -8,10 +9,11 @@ const Slot = mongoose.model('Slot');
 const router = express.Router();
 
 //รับ RFID tag ส่ง Slot ถ้าถูก
-router.post('/esp/parking', async (req, res) => {
-    const { rfidTag } = req.body;
+router.post('/esp/parking', bodyParser.text({type: '*/*'}), async (req, res) => {
+    const rfidTag = req.body;
     try {
         let transaction = await Transaction.findOne({ rfidTag });
+        console.log(transaction);
         let detail = {};
         if (transaction) {
             const slot = await Slot.findOne({ slotName: transaction.slot });
@@ -46,8 +48,8 @@ router.post('/esp/parking', async (req, res) => {
     }
 });
 
-router.post('/esp/driveout', async (req, res) => {
-    const { slotNumber } = req.body;
+router.post('/esp/driveout', bodyParser.text({type: '*/*'}), async (req, res) => {
+    const slotNumber = Number(req.body);
     try {
         const slot = await Slot.findOne({ slotNumber });
         console.log(slot.slotName.toUpperCase());
