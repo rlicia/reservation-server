@@ -38,6 +38,8 @@ router.post('/esp/parking', bodyParser.text({type: '*/*'}), async (req, res) => 
                 });
                 await transaction.save();
                 await history.save();
+            } else if (transaction.status === 2) {
+                return res.status(404).send({ error: 'Status is already equal to PARK' });
             }
         } else {
             return res.status(404).send({ error: 'Invalid RFID Tag' });
