@@ -15,28 +15,30 @@ router.post('/esp/parking', bodyParser.text({type: '*/*'}), async (req, res) => 
         let transaction = await Transaction.findOne({ rfidTag });
         let detail = {};
         if (transaction) {
-            const slot = await Slot.findOne({ slotName: transaction.slot });
-            const slotNumber = slot.slotNumber;
+            if (transaction.status === 1) {
+                const slot = await Slot.findOne({ slotName: transaction.slot });
+                const slotNumber = slot.slotNumber;
 
-            detail = {
-                slotNumber,
-                slot: transaction.slot,
-                license: transaction.license
-            };
-            transaction.createdAt = new Date();
-            transaction.status = 2;
-            transaction.expireAt = null;
-            const history = new History({
-                client: transaction.client,
-                rfidTag: transaction.rfidTag,
-                slot: transaction.slot,
-                zone: transaction.zone,
-                license: transaction.license,
-                createdAt: new Date(),
-                status: 2
-            });
-            await transaction.save();
-            await history.save();
+                detail = {
+                    slotNumber,
+                    slot: transaction.slot,
+                    license: transaction.license
+                };
+                transaction.createdAt = new Date();
+                transaction.status = 2;
+                transaction.expireAt = null;
+                const history = new History({
+                    client: transaction.client,
+                    rfidTag: transaction.rfidTag,
+                    slot: transaction.slot,
+                    zone: transaction.zone,
+                    license: transaction.license,
+                    createdAt: new Date(),
+                    status: 2
+                });
+                await transaction.save();
+                await history.save();
+            }
         } else {
             return res.status(404).send({ error: 'Invalid RFID Tag' });
         }
