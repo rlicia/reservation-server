@@ -13,7 +13,6 @@ router.post('/esp/parking', bodyParser.text({type: '*/*'}), async (req, res) => 
     const rfidTag = req.body;
     try {
         let transaction = await Transaction.findOne({ rfidTag });
-        console.log(transaction);
         let detail = {};
         if (transaction) {
             const slot = await Slot.findOne({ slotName: transaction.slot });
