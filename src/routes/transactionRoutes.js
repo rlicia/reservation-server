@@ -207,22 +207,24 @@ router.delete('/transaction/cancel', async (req, res) => {
             }
         } else {
             const detail = await History.findOne({ client: id }).sort({ createdAt: -1 });
-            if (detail.status === 1 ) {
-                const time = detail.createdAt;
-                time.setHours(time.getHours(),time.getMinutes(),time.getSeconds()+1800,0);
-                const history = new History({
-                    client: detail.client,
-                    rfidTag: detail.rfidTag,
-                    slot: detail.slot,
-                    zone: detail.zone,
-                    license: detail.license,
-                    createdAt: time,
-                    status: 4
-                });
-    
-                await history.save();
+            if (detail) {
+                if (detail.status === 1 ) {
+                    const time = detail.createdAt;
+                    time.setHours(time.getHours(),time.getMinutes(),time.getSeconds()+1800,0);
+                    const history = new History({
+                        client: detail.client,
+                        rfidTag: detail.rfidTag,
+                        slot: detail.slot,
+                        zone: detail.zone,
+                        license: detail.license,
+                        createdAt: time,
+                        status: 4
+                    });
+        
+                    await history.save();
+                }
+                update = 1;
             }
-            update = 1;
         }
 
         res.status(200).send({ update });
@@ -240,20 +242,22 @@ router.get('/transaction/history', async (req, res) => {
         const transaction = await Transaction.findOne({ client: id });
         if (!transaction) {
             const detail = await History.findOne({ client: id }).sort({ createdAt: -1 });
-            if (detail.status === 1 ) {
-                const time = detail.createdAt;
-                time.setHours(time.getHours(),time.getMinutes(),time.getSeconds()+1800,0);
-                const history = new History({
-                    client: detail.client,
-                    rfidTag: detail.rfidTag,
-                    slot: detail.slot,
-                    zone: detail.zone,
-                    license: detail.license,
-                    createdAt: time,
-                    status: 4
-                });
-
-                await history.save();
+            if (detail) {
+                if (detail.status === 1 ) {
+                    const time = detail.createdAt;
+                    time.setHours(time.getHours(),time.getMinutes(),time.getSeconds()+1800,0);
+                    const history = new History({
+                        client: detail.client,
+                        rfidTag: detail.rfidTag,
+                        slot: detail.slot,
+                        zone: detail.zone,
+                        license: detail.license,
+                        createdAt: time,
+                        status: 4
+                    });
+    
+                    await history.save();
+                }
             }
         }
 
@@ -299,20 +303,22 @@ router.post('/transaction/history/detail', async (req, res) => {
         const transaction = await Transaction.findOne({ client: id });
         if (!transaction) {
             const detail = await History.findOne({ client: id }).sort({ createdAt: -1 });
-            if (detail.status === 1 ) {
-                const time = detail.createdAt;
-                time.setHours(time.getHours(),time.getMinutes(),time.getSeconds()+1800,0);
-                const history = new History({
-                    client: detail.client,
-                    rfidTag: detail.rfidTag,
-                    slot: detail.slot,
-                    zone: detail.zone,
-                    license: detail.license,
-                    createdAt: time,
-                    status: 4
-                });
-
-                await history.save();
+            if (detail) {
+                if (detail.status === 1 ) {
+                    const time = detail.createdAt;
+                    time.setHours(time.getHours(),time.getMinutes(),time.getSeconds()+1800,0);
+                    const history = new History({
+                        client: detail.client,
+                        rfidTag: detail.rfidTag,
+                        slot: detail.slot,
+                        zone: detail.zone,
+                        license: detail.license,
+                        createdAt: time,
+                        status: 4
+                    });
+    
+                    await history.save();
+                }
             }
         }
 
