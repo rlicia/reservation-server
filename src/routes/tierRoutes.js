@@ -39,7 +39,8 @@ router.get('/user/tier/:status', async (req, res) => {
                 tier.push({
                     _id: tierData[i]._id,
                     tierName: tierData[i].tierName.charAt(0).toUpperCase() + tierData[i].tierName.substring(1),
-                    tierLevel: tierData[i].tierLevel
+                    tierLevel: tierData[i].tierLevel,
+                    permissions: tierData[i].permissions
                 });
             }
         }
@@ -142,6 +143,12 @@ router.put('/user/tier/:status/:id', async (req, res) => {
             if (checkTierName && tier.tierName !== tierName.toLowerCase()) {
                 return res.status(422).send({ error: 'This tier name is already taken' });
             }
+
+            const checkPermissions = await UserTier.findOne({ permissions });
+            if (checkPermissions._id !== id) {
+                return res.status(422).send({ error: `${checkPermissions.tierName.toUpperCase()} uses same permission set` });
+            }
+
             if ((order || order === 0) && orderTierLevel) {
                 const level = orderTierLevel + Number(order);
                 const greaterEqualOrderTiers = await UserTier.find({ tierLevel: { $gte: level } }).sort({ tierLevel: -1 });
@@ -158,6 +165,7 @@ router.put('/user/tier/:status/:id', async (req, res) => {
                 }
             }
 
+            tier.permissions = permissions;
             tier.tierName = tierName;
             await tier.save();
             res.status(200).send('Tier Updated');
