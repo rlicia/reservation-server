@@ -70,6 +70,11 @@ router.post('/user/tier/:status', async (req, res) => {
             tier = new ClientTier({ tierName, tierLevel: max.tierLevel+1 });
         }
         if (status === '0') {
+            const checkPermissions = await UserTier.findOne({ permissions });
+            if (checkPermissions) {
+                return res.status(422).send({ error: `${checkPermissions.tierName.toUpperCase()} uses same permission set` });
+            }
+
             const checkTierName = await UserTier.findOne({ tierName });
             if (checkTierName) {
                 return res.status(422).send({ error: 'This tier name is already taken' });
@@ -89,7 +94,7 @@ router.post('/user/tier/:status', async (req, res) => {
 //Update Tier
 router.put('/user/tier/:status/:id', async (req, res) => {
     const { status, id } = req.params;
-    const { tierName, order, orderTierLevel } = req.body;
+    const { tierName, order, orderTierLevel, permissions } = req.body;
     try {
         if (status === '1') {
             let tier = await ClientTier.findById(id);
