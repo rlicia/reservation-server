@@ -1,7 +1,8 @@
 require('./models/User');
 require('./models/ClientDetail');
 require('./models/UserDetail');
-require('./models/Tier');
+require('./models/ClientTier');
+require('./models/UserTier');
 require('./models/Slot');
 require('./models/Transaction');
 require('./models/History');
