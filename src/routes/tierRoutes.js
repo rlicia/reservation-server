@@ -54,7 +54,7 @@ router.get('/user/tier/:status', async (req, res) => {
 //Create Tier
 router.post('/user/tier/:status', async (req, res) => {
     const { status } = req.params;
-    const { tierName, permissions } = req.body;
+    const { tierName, order, orderTierLevel, permissions } = req.body;
 
     try {
         let tier;
@@ -67,8 +67,18 @@ router.post('/user/tier/:status', async (req, res) => {
             if (checkFirstChar) {
                 return res.status(422).send({ error: 'First Character of tier name is already taken' });
             }
-            const max = await ClientTier.findOne().sort({ tierLevel: -1 });
-            tier = new ClientTier({ tierName, tierLevel: max.tierLevel+1 });
+
+            let level;
+            if ((order || order === 0) && orderTierLevel) {
+                level = orderTierLevel + order;
+                const greaterEqualOrderTiers = await ClientTier.find({ tierLevel: { $gte: level } }).sort({ tierLevel: -1 });
+                for(i=0; i< greaterEqualOrderTiers.length; i++) {
+                    greaterEqualOrderTiers[i].tierLevel += 1;
+                    await greaterEqualOrderTiers[i].save();
+                }
+            }
+            
+            tier = new ClientTier({ tierName, tierLevel: level });
         }
         if (status === '0') {
             const checkPermissions = await UserTier.findOne({ permissions });
@@ -81,7 +91,16 @@ router.post('/user/tier/:status', async (req, res) => {
                 return res.status(422).send({ error: 'This tier name is already taken' });
             }
 
-            const max = await UserTier.findOne().sort({ tierLevel: -1 });
+            let level;
+            if ((order || order === 0) && orderTierLevel) {
+                level = orderTierLevel + order;
+                const greaterEqualOrderTiers = await UserTier.find({ tierLevel: { $gte: level } }).sort({ tierLevel: -1 });
+                for(i=0; i< greaterEqualOrderTiers.length; i++) {
+                    greaterEqualOrderTiers[i].tierLevel += 1;
+                    await greaterEqualOrderTiers[i].save();
+                }
+            }
+
             tier = new UserTier({ tierName, tierLevel: max.tierLevel+1, permissions });
         }
 
@@ -150,7 +169,7 @@ router.put('/user/tier/:status/:id', async (req, res) => {
             }
 
             if ((order || order === 0) && orderTierLevel) {
-                const level = orderTierLevel + Number(order);
+                const level = orderTierLevel + order;
                 const greaterEqualOrderTiers = await UserTier.find({ tierLevel: { $gte: level } }).sort({ tierLevel: -1 });
                 for(i=0; i< greaterEqualOrderTiers.length; i++) {
                     greaterEqualOrderTiers[i].tierLevel += 1;
