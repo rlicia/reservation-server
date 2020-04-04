@@ -22,20 +22,26 @@ router.get('/user/tier/:status', async (req, res) => {
     const { status } = req.params;
     try {
         let tierData;
+        let tier = [];
         if (status === '1') {
             tierData = await ClientTier.find().sort({ tierLevel: -1 });
+            for(i=0; i<tierData.length; i++) {
+                tier.push({
+                    _id: tierData[i]._id,
+                    tierName: tierData[i].tierName.charAt(0).toUpperCase() + tierData[i].tierName.substring(1),
+                    tierLevel: tierData[i].tierLevel
+                });
+        }
         }
         if (status === '0') {
             tierData = await UserTier.find().sort({ tierLevel: -1 });
-        }
-
-        let tier = [];
-        for(i=0; i<tierData.length; i++) {
-            tier.push({
-                _id: tierData[i]._id,
-                tierName: tierData[i].tierName.charAt(0).toUpperCase() + tierData[i].tierName.substring(1),
-                tierLevel: tierData[i].tierLevel
-            });
+            for(i=0; i<tierData.length; i++) {
+                tier.push({
+                    _id: tierData[i]._id,
+                    tierName: tierData[i].tierName.charAt(0).toUpperCase() + tierData[i].tierName.substring(1),
+                    tierLevel: tierData[i].tierLevel
+                });
+            }
         }
         
         res.status(200).send({ tier });
@@ -47,7 +53,7 @@ router.get('/user/tier/:status', async (req, res) => {
 //Create Tier
 router.post('/user/tier/:status', async (req, res) => {
     const { status } = req.params;
-    const { tierName } = req.body;
+    const { tierName, permissions } = req.body;
 
     try {
         let tier;
@@ -70,7 +76,7 @@ router.post('/user/tier/:status', async (req, res) => {
             }
 
             const max = await UserTier.findOne().sort({ tierLevel: -1 });
-            tier = new UserTier({ tierName, tierLevel: max.tierLevel+1 });
+            tier = new UserTier({ tierName, tierLevel: max.tierLevel+1, permissions });
         }
 
         await tier.save();
