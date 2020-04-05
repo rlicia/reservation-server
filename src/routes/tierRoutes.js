@@ -186,8 +186,10 @@ router.put('/user/tier/:status/:id', async (req, res) => {
             }
 
             const checkPermissions = await UserTier.findOne({ permissions });
-            if (checkPermissions._id !== id) {
-                return res.status(422).send({ error: `${checkPermissions.tierName.toUpperCase()} uses same permission set` });
+            if (checkPermissions) {
+                if (checkPermissions._id.toString() !== id) {
+                    return res.status(422).send({ error: `${checkPermissions.tierName.toUpperCase()} uses same permission set` });
+                }
             }
 
             if ((order || order === 0) && orderTierLevel) {
