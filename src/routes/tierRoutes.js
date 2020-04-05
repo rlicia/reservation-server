@@ -39,8 +39,7 @@ router.get('/user/tier/:status', async (req, res) => {
                 tier.push({
                     _id: tierData[i]._id,
                     tierName: tierData[i].tierName.charAt(0).toUpperCase() + tierData[i].tierName.substring(1),
-                    tierLevel: tierData[i].tierLevel,
-                    permissions: tierData[i].permissions
+                    tierLevel: tierData[i].tierLevel
                 });
             }
         }
@@ -117,6 +116,18 @@ router.post('/user/tier/:status', async (req, res) => {
 
         await tier.save();
         res.status(200).send('Tier Created');
+    } catch (err) {
+        return res.status(500).send({ error: err.message });
+    }
+});
+
+//Get Permission
+router.get('/user/tier/permissions/:id', async (req, res) => {
+    const { id } = req.params;
+    try {
+        const tier = await UserTier.findById(id);
+        const permissions = tier.permissions;
+        res.status(200).send({ permissions });
     } catch (err) {
         return res.status(500).send({ error: err.message });
     }
