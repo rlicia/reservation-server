@@ -70,13 +70,7 @@ router.post('/user/tier/:status', async (req, res) => {
 
             let level;
             if ((order || order === 0) && orderTierLevel) {
-                if (orderTierLevel === -1) {
-                    const maxLevel = await ClientTier.findOne().sort({ tierLevel: -1 });
-                    level = maxLevel + order;
-                } else {
-                    level = orderTierLevel + order;
-                }
-
+                level = orderTierLevel + order;
                 const greaterEqualOrderTiers = await ClientTier.find({ tierLevel: { $gte: level } }).sort({ tierLevel: -1 });
                 for(i=0; i< greaterEqualOrderTiers.length; i++) {
                     greaterEqualOrderTiers[i].tierLevel += 1;
@@ -99,13 +93,7 @@ router.post('/user/tier/:status', async (req, res) => {
 
             let level;
             if ((order || order === 0) && orderTierLevel) {
-                if (orderTierLevel === -1) {
-                    const maxLevel = await ClientTier.findOne().sort({ tierLevel: -1 });
-                    level = maxLevel + order;
-                } else {
-                    level = orderTierLevel + order;
-                }
-                
+                level = orderTierLevel + order;
                 const greaterEqualOrderTiers = await UserTier.find({ tierLevel: { $gte: level } }).sort({ tierLevel: -1 });
                 for(i=0; i< greaterEqualOrderTiers.length; i++) {
                     greaterEqualOrderTiers[i].tierLevel += 1;
