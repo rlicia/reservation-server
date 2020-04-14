@@ -363,7 +363,7 @@ router.post('/transaction/history/detail', async (req, res) => {
 });
 
 router.get('/location', (req, res) => {
-    res.status(200).send([100.463711, 13.723225]); //[lon, lat]
+    res.status(200).send({ location: [100.463711, 13.723225], within: 3 }); //[lon, lat]
 });
 
 module.exports = router;
