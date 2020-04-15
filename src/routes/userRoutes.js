@@ -157,7 +157,7 @@ router.put('/user/account/detail/rfid/:id', async (req, res) => {
 });
 
 //Update Status (Activate or Deactivate)
-router.put('/user/account/detail/:status/:id/rfid/status', async (req, res) => {
+router.put('/user/account/detail/:status/:id/status', async (req, res) => {
     const { status, id } = req.params;
     try {
         let detailData;
